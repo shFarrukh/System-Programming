@@ -6,12 +6,12 @@
 #define constSize 5
 typedef struct array
 {
-    char *start; //указатель на начало строки
-    char *end; // указатель на конец строки
-    int len1; // выделенный размер
-    int len; // уже использованный размер
+    char *start; // pointer to the beginning of line 
+    char *end; // pointer to end of line
+    int len1; // allocated size 
+    int len; // used size
 } array;
-// переменные для парсинга
+// parsing variables 
 struct globalArgs_t
 {
     char *input;
@@ -24,23 +24,23 @@ struct globalArgs_t
 char *program_name;
 FILE *in;
 FILE *out;
-// начальное выделение памяти под строку
+// initial memory allocation for a string 
 void Create_array(array *);
-// добавление данных в конец строки
+// appending data to the end of a line 
 void Add_to_array(array *, char *, long);
-// освобождение памяти
+// freeing memory 
 void Free_array(array *);
-// отображение мануала и ошибок
+// showing the manual and errors
 void Show_err( char* );
-// парсинг входного и выходного файла + опция -h
+// parsing input and output file + option -h 
 void Parsing( int, char ** );
-// чтение входного файла
+// Reading file
 int ReadFile(FILE *, array *);
-// удалить список
+// Deleting an list 
 void Drop(array *);
-// напечатать список строк
+// Print a list of string
 void print(FILE *, array *);
-// сравниватели по алфавиту и длине
+// alphabetical and length comparison
 int alp_len(const void* a, const void* b);
 
 int len_comp(const void* a, const void *b);
@@ -82,7 +82,7 @@ int alp_len(const void *a, const void* b)
 }
 int ReadFile(FILE *stream, array *buf)
 {
-    /* копируем в buf пока не EOF */
+    /* copy to buf until EOF  */
     int len = 0;
     char c = EOF;
     array *tmp = NULL;
@@ -144,7 +144,7 @@ void print(FILE *stream, array *buf)
 void Show_err( char* error )
 {
     /*
-     отображает использование в stdin или в stderr
+     displays usage to stdin or stderr 
     */
     fprintf( error ? stderr : stdout, "%sUsage: %s [options][input_file [output_file]]\n"
     "\tOptions:\n"
@@ -160,7 +160,7 @@ void Parsing( int argc, char **argv )
   /*
   Parse the options and parameters
   */
-  const char *optString = "l:anrр?"; // это значит опции f и какое-то его значение, r и значение, i без значения(флаг), h флаг, неизвестно
+  const char *optString = "l:anrГ°?"; // this means options f and some of its value, r and value, i without value (flag), h flag, unknown 
   int opt = 0;
   globalArgs.input = NULL;
   globalArgs.output = NULL;
@@ -196,12 +196,12 @@ void Parsing( int argc, char **argv )
     opt = getopt( argc, argv, optString );
   } while( opt != -1 );
   // Parse positional parameters
-  // если указали файлы
+  // ГҐГ±Г«ГЁ ГіГЄГ Г§Г Г«ГЁ ГґГ Г©Г«Г»
   if (argc >= optind)
   globalArgs.input = argv[optind];
   if (argc > optind)
   globalArgs.output = argv[optind + 1];
-  // назначение потоков ввода и вывода
+  // assignment of input and output streams 
   if (globalArgs.input)
     in = fopen(globalArgs.input, "rb");
   else
@@ -218,14 +218,14 @@ void Parsing( int argc, char **argv )
 void Add_to_array(array *dest, char* src, long len)
 {
   if (dest->len + len > dest->len1)
-  { // проверка "хватит ли памяти?" и перевыделение, если нет
+  { // checking "is there enough memory?" and re-allocation if not 
     dest->start = (char*)realloc(dest->start, sizeof(char) * (dest->len + len + constSize));
     if (!dest->start)
       exit( EXIT_FAILURE );
-    dest->end = dest->start + dest->len; // изменение указателей, т.к. после перевыделения может измениться адрес строки
+    dest->end = dest->start + dest->len; // changing pointers, because after reallocation the address of the string may change 
     dest->len1 = dest->len + len + constSize;
   }
-    memcpy(dest->end, src, len); // добавление данных в конец
+    memcpy(dest->end, src, len); // appending data to the end 
     dest->len += len;
     dest->end += len;
 }
